@@ -80,7 +80,7 @@ def get_dataframe_from_apis():
     admissions_with_notes_and_codes = combine_notes_and_admissions_and_codes(admissions, notes, icd_codes, patients)
     #admissions_with_notes = testing_admissions_with_notes()
 
-    df = pd.json_normalize(admissions_with_notes)
+    df = pd.json_normalize(admissions_with_notes_and_codes)
     # create an index column where the rows have values from 0 to len(df.iterrows())-1
     df.reset_index(inplace=True)
 
