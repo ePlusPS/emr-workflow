@@ -14,7 +14,7 @@ def add_los_age_and_binary_deathtime_columns(df):
 
         los_timedelta = discharge - admit
         los_days_int = los_timedelta.days
-        los_list.append(los_days_int)
+        los_list.append(abs(los_days_int))
 
         dob = pd.to_datetime(row['dob'])
         age = float(admit.year - dob.year)
@@ -36,7 +36,7 @@ def add_readmission_column(df):
     for i, row in df.iterrows():
         current_admittime = pd.to_datetime(row['admittime'])
         
-        patient_id = row['patient_id']
+        patient_id = row['patient_id'] 
         same_patient_df = df.loc[df['patient_id'] == patient_id]
 
         readmit = False
