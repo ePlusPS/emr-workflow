@@ -9,6 +9,13 @@ class SomeCallableTest(unittest.TestCase):
 
     # tests for add_los_age_and_binary_deathtime_columns 
     
+    # tests for compare_times_for_readmission
+      # test with an admittime less than a discharge time, hence difference will be negative
+      # test with the difference between last dischtime and current admittime is between 30 and 31 days
+      # test the difference qualifying for being flagged as a readmission
+      # test with the difference being 0
+      # test with the difference being greater than a readmission
+
     # tests for add_readmission_column
     
     #may be worth breaking out readmission flag logic to a function per-row. Easier testing that way.
