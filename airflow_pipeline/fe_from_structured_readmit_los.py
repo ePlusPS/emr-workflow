@@ -37,7 +37,8 @@ def add_readmission_column(df):
         current_admittime = pd.to_datetime(row['admittime'])
         
         patient_id = row['patient_id'] 
-        same_patient_df = df.loc[df['patient_id'] == patient_id]
+        is_patient = df['patient_id'] == patient_id
+        same_patient_df = df[is_patient]
 
         readmit = False
         for i, subrow in same_patient_df.iterrows():
@@ -46,7 +47,7 @@ def add_readmission_column(df):
                 sub_dischtime = pd.to_datetime(subrow['dischtime'])
                 time_between_visits = current_admittime - sub_dischtime
                 #first conditional statement filters out future subrow visits from the current row
-                if time_between_visits > zero_timedelta and time_between_visits <= readmit_threshold:
+                if time_between_visits >= zero_timedelta and time_between_visits <= readmit_threshold:
                     readmit = True
         readmit_list.append(readmit)
     df['readmission'] = readmit_list
