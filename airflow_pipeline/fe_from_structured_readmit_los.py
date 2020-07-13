@@ -29,6 +29,21 @@ def add_los_age_and_binary_deathtime_columns(df):
 
     return df
 
+def compare_rows_for_readmission(row, sub_row):
+    readmit_threshold = pd.to_timedelta('30 days 00:00:00')
+    zero_timedelta = pd.to_timedelta('0 days 00:00:00')
+    
+    current_admittime = pd.to_datetime(row['admittime'])
+    sub_dischtime = pd.to_datetime(row['dischtime'])
+    time_between_visits = current_admittime - sub_dischtime
+
+    readmit = False
+    #first conditional statement filters out future subrow visits from the current row
+    if time_between_visits >= zero_timedelta and time_between_visits <= readmit_threshold:
+        readmit = True
+
+    return readmit
+
 def add_readmission_column(df):
     readmit_list = []
     readmit_threshold = pd.to_timedelta('30 days 00:00:00')
@@ -44,11 +59,7 @@ def add_readmission_column(df):
         for i, subrow in same_patient_df.iterrows():
             #don't compare the row to itself
             if subrow['admission_id'] != row['admission_id']:
-                sub_dischtime = pd.to_datetime(subrow['dischtime'])
-                time_between_visits = current_admittime - sub_dischtime
-                #first conditional statement filters out future subrow visits from the current row
-                if time_between_visits >= zero_timedelta and time_between_visits <= readmit_threshold:
-                    readmit = True
+                readmit = compare_rows_for_readmission(row, subrow)
         readmit_list.append(readmit)
     df['readmission'] = readmit_list
     return df
