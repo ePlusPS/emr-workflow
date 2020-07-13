@@ -7,7 +7,8 @@ import create_report_summary
 
 class SomeCallableTest(unittest.TestCase):
     
-    # create test cases for make_patient_summary and make_hospital_summary
+    # tests for make_patient_summary 
+    # tests for make_hospital_summary
 
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')

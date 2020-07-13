@@ -7,7 +7,8 @@ import combine_readmission_probabilities_tensorflow
 
 class SomeCallableTest(unittest.TestCase):
 
-    # create tests for create_model and predict_with_model
+    # tests for create_model 
+    # tests for predict_with_model
 
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')

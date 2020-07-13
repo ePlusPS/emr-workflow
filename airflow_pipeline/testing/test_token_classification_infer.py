@@ -8,6 +8,7 @@ import token_classification_infer
 class SomeCallableTest(unittest.TestCase):
 
     # create tests for infer function
+
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')
         assert(2 == 2)

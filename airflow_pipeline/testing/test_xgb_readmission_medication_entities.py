@@ -7,7 +7,15 @@ import xgb_readmission_medication_entities
 
 class SomeCallableTest(unittest.TestCase):
 
-    # create test cases for make_one_hot, train_xgb_model, add_predictions_column, make_top_n_features
+    # tests for make_one_hot
+    
+    # tests for train_xgb_model
+    
+    # tests for add_predictions_column
+    
+    # tests for make_top_n_features
+
+
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')
         assert(2 == 2)

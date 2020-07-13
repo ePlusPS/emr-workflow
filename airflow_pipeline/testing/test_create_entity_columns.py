@@ -7,7 +7,8 @@ import create_entity_columns
 
 class SomeCallableTest(unittest.TestCase):
 
-    #create tests for extract_entities and get_columns_from_notes
+    # tests for extract_entities 
+    # tests for get_columns_from_notes
 
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')

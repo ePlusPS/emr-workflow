@@ -7,7 +7,10 @@ import fe_from_structured_readmit_los
 
 class SomeCallableTest(unittest.TestCase):
 
-    #add test cases for add_los_age_and_binary_deathtime_columns and add_readmission_column
+    # tests for add_los_age_and_binary_deathtime_columns 
+    
+    # tests for add_readmission_column
+    
     #may be worth breaking out readmission flag logic to a function per-row. Easier testing that way.
 
     def test_1(self):

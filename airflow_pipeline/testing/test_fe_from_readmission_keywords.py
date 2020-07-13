@@ -7,7 +7,11 @@ import fe_from_readmission_keywords
 
 class SomeCallableTest(unittest.TestCase):
 
-    # create tests for find_readmit_similar_terms, add_found_words_column, one_hot_encode_found_key_terms
+    # tests for find_readmit_similar_terms
+    
+    # tests for add_found_words_column
+    
+    # tests for one_hot_encode_found_key_terms
 
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')

@@ -7,7 +7,7 @@ import inference_per_100000
 
 class SomeCallableTest(unittest.TestCase):
 
-    # create test cases for label_notes
+    # tests for label_notes
 
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')

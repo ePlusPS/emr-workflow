@@ -7,9 +7,17 @@ import unittest
 import first_table_from_api
 class SomeCallableTest(unittest.TestCase):
     
-    # write tests for each api function: get_all_notes, get_admissions, get_icd_codes, get_patients
-    # write tests for combine_notes_and_admissions_and_codes
-
+    # tests for get_all_notes
+    
+    # tests for get_admissions
+    
+    # tests for get_icd_codes
+    
+    # tests for get_patients
+    
+    # tests for combine_notes_and_admissions_and_codes
+    
+    #example tests
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')
         assert(2 == 2)
