@@ -26,7 +26,16 @@ Get Data
 """
 def create_word2vec_model():
     tokens_string = standard_read_from_db('word2vec_notes_tokenized').decode()
-    tokens = ast.literal_eval(tokens_string)
+
+    # this statement kills the process. The alternative is below.
+    #tokens = ast.literal_eval(tokens_string)
+
+    tokens_string = tokens_string.replace('\'', '')
+    tokens = tokens_string.split(',')
+    #get rid of brackets from serialized list
+    tokens[0] = tokens[0].split('[')[1]
+    tokens[-1] = tokens[-1].split(']')[0]
+
     #model = Word2Vec([tokens], size=100, window=10, min_count=2, workers=3)
     #found readmission as one of the tokens in tokens while testing, reduced min_count to get rid of that error
 
