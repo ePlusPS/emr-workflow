@@ -165,14 +165,14 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     row = {**row, **icd_codes_los_dict}
 
     # make row entries for the top 3 terms from each xgboost model
-    row['top_3_terms_feat_los'] = top_terms_dict['top_n_feat_los_df'].columns
-    row['top_3_terms_neg_feat_los'] = top_terms_dict['top_n_neg_feat_los_df'].columns
-    row['top_3_terms_med_los'] = top_terms_dict['top_n_med_los_df'].columns
-    row['top_3_terms_neg_med_los'] = top_terms_dict['top_n_neg_med_los_df'].columns
-    row['top_3_terms_feat_readmissions'] = top_terms_dict['top_n_feat_readm_df'].columns
-    row['top_3_terms_neg_feat_readmissions'] = top_terms_dict['top_n_neg_feat_readm_df'].columns
-    row['top_3_terms_med_readmissions'] = top_terms_dict['top_n_med_readm_df'].columns
-    row['top_3_terms_neg_med_readmissions'] = top_terms_dict['top_n_neg_med_readm_df'].columns
+    row['top_5_terms_feat_los'] = top_terms_dict['top_n_feat_los_df'].columns
+    row['top_5_terms_neg_feat_los'] = top_terms_dict['top_n_neg_feat_los_df'].columns
+    row['top_5_terms_med_los'] = top_terms_dict['top_n_med_los_df'].columns
+    row['top_5_terms_neg_med_los'] = top_terms_dict['top_n_neg_med_los_df'].columns
+    row['top_5_terms_feat_readmissions'] = top_terms_dict['top_n_feat_readm_df'].columns
+    row['top_5_terms_neg_feat_readmissions'] = top_terms_dict['top_n_neg_feat_readm_df'].columns
+    row['top_5_terms_med_readmissions'] = top_terms_dict['top_n_med_readm_df'].columns
+    row['top_5_terms_neg_med_readmissions'] = top_terms_dict['top_n_neg_med_readm_df'].columns
 
     #top 10 icd codes by readmissions from word2vec model
     row['readmission_themes'] = readmission_word2vec.most_similar('readmission', topn=10)
