@@ -205,7 +205,7 @@ def xgb_read_from_db(collection_name):
     top_n_df_json_encoded = fs.get(most_recent_entry['top_n_df_gridfs_id']).read()
     xgb_pickle = fs.get(most_recent_entry['xgb_gridfs_id'])
 
-    return df_json_encoded, xgb_pickle
+    return df_json_encoded, top_n_df_json_encoded, xgb_pickle
 
 def summary_report_write_to_db(patient_df_json_encoded, hospital_df_json_encoded):
     db = get_db()

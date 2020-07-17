@@ -20,7 +20,7 @@ def predict_with_model(proba_df, model):
     return predictions
 
 def make_predictions():
-    readmission_classifer_df_json_encoded, _  = readmission_classifier_read_from_db()
+    readmission_classifier_df_json_encoded, _  = readmission_classifier_read_from_db()
     readmission_classifier_df = pd.read_json(readmission_classifier_df_json_encoded.decode())
 
     xgb_demo_df_json_encoded, top_n_demo_df_json_encoded, _ = xgb_read_from_db('demo_xgb_readmission')
@@ -54,12 +54,19 @@ def make_predictions():
 
     tf_input = pd.concat([prev_probas, top_n_demo_df, top_n_feat_df, top_n_neg_feat_df, top_n_med_df, top_n_neg_med_df], axis=1)
 
-    readmissions = xgb_demo_df['readmissions']
+    print('prev_probas: '+prev_probas.columns)
+    print('top_n_demo_df: '+top_n_demo_df.columns)
+    print('top_n_feat_df: '+top_n_feat_df.columns)
+    print('top_n_neg_feat_df: '+top_n_neg_feat_df.columns)
+    print('top_n_med_df: '+top_n_med_df.columns)
+    print('top_n_neg_med_df: '+top_n_neg_med_df.columns)
 
-    model = creat_model(tf_input, readmissions)
+    print(tf_input.columns)
+    readmissions = xgb_demo_df['readmission']
+
+    model = create_model(tf_input, readmissions)
     model_predictions = predict_with_model(tf_input, model)
     tf_input['keras_pred'] = model_predictions
-    tf_input['admission_id'] = readmission_classifier_df['admission_id']
 
     tf_input_json_encoded = tf_input.to_json().encode()
     standard_write_to_db('readmission_tensorflow_predictions', tf_input_json_encoded)

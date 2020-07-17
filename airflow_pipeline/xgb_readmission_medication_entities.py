@@ -11,10 +11,9 @@ def make_one_hot(df):
 
     return med_one_hot
 
-def train_xgb_model(df):
-    med_one_hot = make_one_hot(df)
+def train_xgb_model(df, one_hot_df):
     labels = pd.DataFrame(df['readmission'])
-    data = xgb.DMatrix(med_one_hot, label=labels)
+    data = xgb.DMatrix(one_hot_df, label=labels)
 
     parameters = {
             'booster': 'gbtree', 
@@ -29,9 +28,8 @@ def train_xgb_model(df):
     
     return bst
     
-def add_predictions_column(df, bst):
-    med_one_hot = make_one_hot(df)
-    data = xgb.DMatrix(med_one_hot)
+def add_predictions_column(df, one_hot_df, bst):
+    data = xgb.DMatrix(one_hot_df)
     predictions = bst.predict(data)
     df['xgb_med_ent_pred'] = predictions
 
@@ -53,14 +51,16 @@ def make_predictions():
     df_json_encoded = standard_read_from_db('entity_columns')
     df = pd.read_json(df_json_encoded.decode())
     
-    bst = train_xgb_model(df)
-    
-    df = add_predictions_column(df, bst)
+    one_hot_df = make_one_hot(df)
 
-    top_n_df = make_top_n_features(bst, feat_one_hot, 3)
+    bst = train_xgb_model(df, one_hot_df)
+    
+    df = add_predictions_column(df, one_hot_df, bst)
+
+    top_n_df = make_top_n_features(bst, one_hot_df, 5)
 
     df_json_encoded = df.to_json().encode()
-    top_n_df_json_encoded = df.to_json().encode()
+    top_n_df_json_encoded = top_n_df.to_json().encode()
     bst_pickle = pickle.dumps(bst)
 
     xgb_write_to_db('med_xgb_readmission', df_json_encoded, top_n_df_json_encoded, bst_pickle)

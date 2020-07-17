@@ -1,5 +1,7 @@
 import pandas as pd
 import datetime
+import pytz
+import pickle
 from workflow_read_and_write import standard_read_from_db, summary_report_write_to_db, xgb_read_from_db
 
 def make_patient_summary(df):
@@ -14,7 +16,7 @@ def make_patient_summary(df):
         # apply filter
         pat_df = df[is_patient]
         # change admittime column to datetime data type
-        pat_df['admittime'] = pd.to_datetime(pat_df['admittime'])
+        #pat_df['admittime'] = pd.to_datetime(pat_df['admittime'], utc=True)
         
         # get the number of readmissions
         num_readmissions = pat_df['readmission'].sum()
@@ -22,12 +24,13 @@ def make_patient_summary(df):
         # get admissions for past year and get a list of all icd_codes
         adm_past_year = 0
         now = datetime.datetime.now()
+        now = now.replace(tzinfo=pytz.utc)
         year = pd.to_timedelta('365 days 00:00:00')
         past_year = now - year
         #initialize an empty list for the icd codes
         icd_codes = []
         for i, row in pat_df.iterrows():
-
+            row['admittime'] = pd.to_datetime(row['admittime'], utc=True)
             icd_codes += row['icd_codes']
 
             if row['admittime'] >= past_year:
@@ -136,10 +139,10 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
 
     # create a dictionary to keep track of the average los for a given icd code
     icd_codes_los_dict = {}
-    #initialize empty list that will be used as a filter
-    in_codes = []
     # iterate through icd codes
     for code in icd_codes:
+        #initialize empty list that will be used as a filter
+        in_codes = []
         # iterate through dataframe rows to append values to the filter in_codes
         for i, row in df.iterrows():
             # append a boolean value if a given icd code is present for a given row
@@ -157,7 +160,9 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     # make a row entry for the top 10 icd codes from los 
     row['top_10_icd_codes_from_los'] = top_10_icd_los
     # add average los for each icd code to the row
-    row.update(icd_codes_los_dict)
+    #the following expression was giving errors
+    #row.update(icd_codes_los_dict)
+    row = {**row, **icd_codes_los_dict}
 
     # make row entries for the top 3 terms from each xgboost model
     row['top_3_terms_feat_los'] = top_terms_dict['top_n_feat_los_df'].columns
@@ -225,7 +230,7 @@ def create_report():
 
     # Get the word2vec model for readmissions.
     readmission_word2vec_model_pickle = standard_read_from_db('readmission_word2vec')
-    readmission_word2vec_model = pickle.loads(readmission_Word2vec_model_pickle)
+    readmission_word2vec_model = pickle.loads(readmission_word2vec_model_pickle)
     
     # create hospital summary df
     hospital_summary_df = make_hospital_summary(structured_df, top_n_dict, readmission_word2vec_model)
