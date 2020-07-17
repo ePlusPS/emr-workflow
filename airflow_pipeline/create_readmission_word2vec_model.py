@@ -31,7 +31,7 @@ def create_word2vec_model():
     #tokens = ast.literal_eval(tokens_string)
     
     tokens_string = tokens_string.replace('\'','')
-    tokens = tokens_string.split(',')
+    tokens = tokens_string.split(', ')
     # get rid of brackets from serialized list
     tokens[0] = tokens[0].split('[')[1]
     tokens[-1] = tokens[-1].split(']')[0]
