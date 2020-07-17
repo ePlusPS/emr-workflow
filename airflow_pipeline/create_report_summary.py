@@ -141,6 +141,8 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     icd_codes_los_dict = {}
     # iterate through icd codes
     for code in icd_codes:
+        if code == None:
+            code = 'None'
         #initialize empty list that will be used as a filter
         in_codes = []
         # iterate through dataframe rows to append values to the filter in_codes
