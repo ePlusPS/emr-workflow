@@ -219,7 +219,7 @@ def summary_report_write_to_db(patient_df_json_encoded, hospital_df_json_encoded
     mongodb_output = {
             'timestamp': timestamp,
             'patient_df_gridfs_id': patient_df_gridfs_id,
-            'hospital_df_gridfs_id': hostpital_df_gridfs_id,
+            'hospital_df_gridfs_id': hospital_df_gridfs_id,
         }
 
     collection.insert_one(mongodb_output)
