@@ -108,10 +108,10 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     for code in readmission_icd_codes:
         #create filter column to remove rows that don't have a given icd code
         in_codes =[]
-        for i, row in df.iterrows():
+        for i, row in readmission_df.iterrows():
             in_codes.append(code in row['icd_codes'])
         #Use the filter to remove the rows without a given icd code
-        filtered_df = df[in_codes]
+        filtered_df = readmission_df[in_codes]
         readm_icd_count_dict[code] = len(filtered_df)
     # sort the icd code dictionary based on count
     readm_icd_count_sorted = {k: v for k, v in sorted(readm_icd_count_dict.items(), key=lambda item: item[1])}
