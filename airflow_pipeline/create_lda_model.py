@@ -44,7 +44,7 @@ def make_model(tokens):
     corpus = dictionary.doc2bow(tokens)
     #the statement below doesn't work, changed input to ngram_concat_tokens
     #corpus = [dictionary.doc2bow(text) for text in all_ngrams]
-    lda_model=gensim.models.LdaMulticore(corpus=corpus,num_topics=5,id2word=dictionary,passes=10,workers=3)
+    lda_model=gensim.models.LdaMulticore(corpus=corpus,num_topics=5,id2word=dictionary,passes=10,workers=75)
 
     return dictionary, corpus, lda_model
 
