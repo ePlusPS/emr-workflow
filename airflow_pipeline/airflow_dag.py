@@ -35,6 +35,7 @@ import xgb_los_neg_medication_entities
 import combine_los_estimates_tensorflow
 import readmission_tf_prob_to_likert
 import create_report_summary
+import write_summary_report_to_directory
 
 import placeholder
 
@@ -248,6 +249,12 @@ readmission_prob_to_likert_operator = PythonOperator(
 summary_report_operator = PythonOperator(
     task_id = 'make_summary_report',
     python_callable = create_report_summary.create_report,
+    dag = dag
+    )
+
+write_to_dash_operator = PythonOperator(
+    task_idf = 'write_summaries_to_dash',
+    python_callable = write_summary_report_to_directory.write_files,
     dag = dag
     )
 
