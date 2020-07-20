@@ -230,8 +230,8 @@ def summary_report_read_from_db():
     collection = db['summary_report']
 
     most_recent_entry = collection.find_one(sort=[('_id', pymongo.DESCENDING)])
-    patient_df_json_encoded = fs.get(most_recent_entry['patient_df_gridfs_id'])
-    hospital_df_json_encoded = fs.get(most_recent_entry['hospital_df_gridfs_id'])
+    patient_df_json_encoded = fs.get(most_recent_entry['patient_df_gridfs_id']).read()
+    hospital_df_json_encoded = fs.get(most_recent_entry['hospital_df_gridfs_id']).read()
 
     return patient_df_json_encoded, hospital_df_json_encoded
 
