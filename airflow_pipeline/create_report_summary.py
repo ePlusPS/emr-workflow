@@ -65,7 +65,7 @@ def make_patient_summary(df):
                 'dx_description': dx_description
                 }
         # add the row for a given patient
-        summary_df.append(summary_row, ignore_index=True)
+        summary_df = summary_df.append(summary_row, ignore_index=True)
 
     return summary_df
 
@@ -181,7 +181,7 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
 
     # Add the row to the dataframe. Since there is only one row, may not need a dataframe.
     # It is kept for now for consistency's sake.
-    summary_df.append(row)
+    summary_df = summary_df.append(row, ignore_index=True)
     return summary_df
 
 def create_report():
