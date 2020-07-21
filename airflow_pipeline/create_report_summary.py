@@ -2,7 +2,7 @@ import pandas as pd
 import datetime
 import pytz
 import pickle
-from workflow_read_and_write import standard_read_from_db, summary_report_write_to_db, xgb_read_from_db
+from workflow_read_and_write import standard_read_from_db, lda_output_read_from_db, summary_report_write_to_db, xgb_read_from_db
 
 def make_patient_summary(df):
     summary_df = pd.DataFrame()
@@ -70,7 +70,7 @@ def make_patient_summary(df):
     return summary_df
 
 
-def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
+def make_hospital_summary(df, top_terms_dict, readmission_word2vec, lda_topics):
     summary_df = pd.DataFrame()
     summary_row = {}
 
@@ -158,10 +158,8 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     top_10_icd_los = list(icd_los_sorted)[-10:]
     # make a row entry for the top 10 icd codes from los 
     summary_row['top_10_icd_codes_from_los'] = top_10_icd_los
-    # add average los for each icd code to the row
-    #the following expression was giving errors
-    #row.update(icd_codes_los_dict)
-    summary_row = {**summary_row, **icd_codes_los_dict}
+    # add average los for each icd code to the row, not needed for now
+    #summary_row = {**summary_row, **icd_codes_los_dict}
 
     # make row entries for the top 3 terms from each xgboost model
     summary_row['top_5_terms_feat_los'] = top_terms_dict['top_n_feat_los_df'].columns
@@ -175,6 +173,8 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
 
     #top 10 icd codes by readmissions from word2vec model
     summary_row['readmission_themes'] = readmission_word2vec.most_similar('readmission', topn=10)
+
+    summary_row['lda_topics'] = lda_topics
 
     # Add the row to the dataframe. Since there is only one row, may not need a dataframe.
     # It is kept for now for consistency's sake.
@@ -231,8 +231,11 @@ def create_report():
     readmission_word2vec_model_pickle = standard_read_from_db('readmission_word2vec')
     readmission_word2vec_model = pickle.loads(readmission_word2vec_model_pickle)
     
+    # Get lda topics
+    _, _, lda_topics = lda_output_read_from_db()
+
     # create hospital summary df
-    hospital_summary_df = make_hospital_summary(structured_df, top_n_dict, readmission_word2vec_model)
+    hospital_summary_df = make_hospital_summary(structured_df, top_n_dict, readmission_word2vec_model, lda_topics)
 
     # serialize patient and hospital summary dataframes
     patient_summary_df_json_encoded = patient_summary_df.to_json().encode()
