@@ -1,6 +1,7 @@
 import pandas as pd
 from nltk import sent_tokenize
 import re
+import gensim
 import pickle
 import pymongo
 import gridfs
