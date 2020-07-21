@@ -36,6 +36,7 @@ import combine_los_estimates_tensorflow
 import readmission_tf_prob_to_likert
 import create_report_summary
 import write_summary_report_to_directory
+import create_lda_model
 
 import placeholder
 
@@ -253,8 +254,14 @@ summary_report_operator = PythonOperator(
     )
 
 write_to_dash_operator = PythonOperator(
-    task_idf = 'write_summaries_to_dash',
+    task_id = 'write_summaries_to_dash',
     python_callable = write_summary_report_to_directory.write_files,
+    dag = dag
+    )
+
+lda_model_operator = PythonOperator(
+    task_id = 'create_lda_model',
+    python_callable = create_lda_model.create_lda_model,
     dag = dag
     )
 
@@ -263,7 +270,8 @@ structured_features_operator.set_downstream([
     all_word2vec_clean_notes_operator, 
     readmission_word2vec_clean_notes_operator, 
     ner_clean_operator, 
-    readmission_classifier_prep_operator])
+    readmission_classifier_prep_operator,
+    lda_model_operator])
 
 readmission_word2vec_clean_notes_operator.set_downstream(readmission_word2vec_tokenize_notes_operator)
 readmission_word2vec_tokenize_notes_operator.set_downstream(readmission_word2vec_operator)
@@ -301,6 +309,7 @@ readmission_tensorflow_operator.set_downstream(readmission_prob_to_likert_operat
 readmission_prob_to_likert_operator.set_downstream(summary_report_operator)
 los_tensorflow_operator.set_downstream(summary_report_operator)
 readmission_word2vec_operator.set_downstream(summary_report_operator)
+lda_model_operator.set_downstream(summary_report_operator)
 summary_report_operator.set_downstream(write_to_dash_operator)
 #infected_one_hot_operator.set_downstream(combine_all_dataframes_operator)
 #readmission_one_hot_operator.set_downstream(combine_all_dataframes_operator)
