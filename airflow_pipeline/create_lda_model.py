@@ -5,7 +5,7 @@ import pickle
 import pymongo
 import gridfs
 import datetime
-from workflow_read_and_write import standard_read_from_db, lda_write_to_db 
+from workflow_read_and_write import standard_read_from_db, standard_write_to_db, lda_output_write_to_db 
 
 #table = pq.read_table('/home/emrm1/emr-workflow/admissions.parquet')
 #df = table.to_pandas()
