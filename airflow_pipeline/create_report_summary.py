@@ -72,10 +72,9 @@ def make_patient_summary(df):
 
 def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     summary_df = pd.DataFrame()
-    row = {}
+    summary_row = {}
 
-    row['total_admissions'] = len(df)
-    
+    summary_row['total_admissions'] = len(df)
     #create lists of unique values for icd codes, insurance, and gender
     icd_codes = []
     for i, row in df.iterrows():
@@ -85,18 +84,17 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     pos_ins_vals = df['insurance'].unique()
     pos_gend_vals = df['gender'].unique()
 
-    row['total_readmissions'] = df['readmission'].sum()
+    summary_row['total_readmissions'] = df['readmission'].sum()
     #filter for other readmission counts
     readmission_df = df[df['readmission']]
     for val in pos_ins_vals:
         is_val = readmission_df['insurance'] == val
         filtered_df = readmission_df[is_val]
-        row['Insurance: ' + val + ' readmission_count'] = len(filtered_df)
+        summary_row['Insurance: ' + val + ' readmission_count'] = len(filtered_df)
     for val in pos_gend_vals:
         is_val = readmission_df['gender'] == val
         filtered_df = readmission_df[is_val]
-        row['Gender: ' + val + ' readmission_count'] = len(filtered_df)
-
+        summary_row['Gender: ' + val + ' readmission_count'] = len(filtered_df)
     #get top 10 icd codes by readmission count:
     readmission_icd_codes = []
     for i, row in readmission_df.iterrows():
@@ -117,10 +115,9 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     readm_icd_count_sorted = {k: v for k, v in sorted(readm_icd_count_dict.items(), key=lambda item: item[1])}
     # get the top 10 codes from the sorted list
     top_10_icd_readm = list(readm_icd_count_sorted)[-10:]
-    row['top_10_icd_codes_readmission_count'] = top_10_icd_readm
+    summary_row['top_10_icd_codes_readmission_count'] = top_10_icd_readm
 
-
-    row['overall_los_avg'] = df['los'].mean()
+    summary_row['overall_los_avg'] = df['los'].mean()
     #filter for other los averages
     
     # get los average for possible insurance types
@@ -128,14 +125,14 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
         is_val = df['insurance'] == val
         filtered_df = df[is_val]
         avg_los = filtered_df['los'].mean()
-        row['Insurance: ' + val + ' los_avg'] = avg_los
+        summary_row['Insurance: ' + val + ' los_avg'] = avg_los
 
     # get los average for possible gender values
     for val in pos_gend_vals:
         is_val = df['gender'] == val
         filtered_df = df[is_val]
         avg_los = filtered_df['los'].mean()
-        row['Gender: ' + val + ' los_avg'] = avg_los
+        summary_row['Gender: ' + val + ' los_avg'] = avg_los
 
     # create a dictionary to keep track of the average los for a given icd code
     icd_codes_los_dict = {}
@@ -160,28 +157,28 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec):
     # get top 10 icd codes from the sorted dictionary
     top_10_icd_los = list(icd_los_sorted)[-10:]
     # make a row entry for the top 10 icd codes from los 
-    row['top_10_icd_codes_from_los'] = top_10_icd_los
+    summary_row['top_10_icd_codes_from_los'] = top_10_icd_los
     # add average los for each icd code to the row
     #the following expression was giving errors
     #row.update(icd_codes_los_dict)
-    row = {**row, **icd_codes_los_dict}
+    summary_row = {**summary_row, **icd_codes_los_dict}
 
     # make row entries for the top 3 terms from each xgboost model
-    row['top_5_terms_feat_los'] = top_terms_dict['top_n_feat_los_df'].columns
-    row['top_5_terms_neg_feat_los'] = top_terms_dict['top_n_neg_feat_los_df'].columns
-    row['top_5_terms_med_los'] = top_terms_dict['top_n_med_los_df'].columns
-    row['top_5_terms_neg_med_los'] = top_terms_dict['top_n_neg_med_los_df'].columns
-    row['top_5_terms_feat_readmissions'] = top_terms_dict['top_n_feat_readm_df'].columns
-    row['top_5_terms_neg_feat_readmissions'] = top_terms_dict['top_n_neg_feat_readm_df'].columns
-    row['top_5_terms_med_readmissions'] = top_terms_dict['top_n_med_readm_df'].columns
-    row['top_5_terms_neg_med_readmissions'] = top_terms_dict['top_n_neg_med_readm_df'].columns
+    summary_row['top_5_terms_feat_los'] = top_terms_dict['top_n_feat_los_df'].columns
+    summary_row['top_5_terms_neg_feat_los'] = top_terms_dict['top_n_neg_feat_los_df'].columns
+    summary_row['top_5_terms_med_los'] = top_terms_dict['top_n_med_los_df'].columns
+    summary_row['top_5_terms_neg_med_los'] = top_terms_dict['top_n_neg_med_los_df'].columns
+    summary_row['top_5_terms_feat_readmissions'] = top_terms_dict['top_n_feat_readm_df'].columns
+    summary_row['top_5_terms_neg_feat_readmissions'] = top_terms_dict['top_n_neg_feat_readm_df'].columns
+    summary_row['top_5_terms_med_readmissions'] = top_terms_dict['top_n_med_readm_df'].columns
+    summary_row['top_5_terms_neg_med_readmissions'] = top_terms_dict['top_n_neg_med_readm_df'].columns
 
     #top 10 icd codes by readmissions from word2vec model
-    row['readmission_themes'] = readmission_word2vec.most_similar('readmission', topn=10)
+    summary_row['readmission_themes'] = readmission_word2vec.most_similar('readmission', topn=10)
 
     # Add the row to the dataframe. Since there is only one row, may not need a dataframe.
     # It is kept for now for consistency's sake.
-    summary_df = summary_df.append(row, ignore_index=True)
+    summary_df = summary_df.append(summary_row, ignore_index=True)
     return summary_df
 
 def create_report():
