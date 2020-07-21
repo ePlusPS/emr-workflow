@@ -25,41 +25,42 @@ def standard_write_to_db(collection_name, step_output):
     mongodb_output = {'timestamp':timestamp, 'gridfs_id':gridfs_id}
     collection.insert_one(mongodb_output)
 
-def lda_read_from_db():
+def lda_output_read_from_db():
     db = get_db()
-    collection = db['lda_model']
+    fs = gridfs.GridFS(db)
+    collection = db['lda_output']
     most_recent_entry = collection.find_one(sort=[('_id', pymongo.DESCENDING)])
 
     dictionary_pickle = fs.get(most_recent_entry['dictionary_gridfs_id']).read()
     corpus_pickle = fs.get(most_recent_entry['corpus_gridfs_id']).read()
-    lda_model_pickle = fs.get(most_recent_entry['lda_model_gridfs_id']).read()
+    lda_topics_pickle = fs.get(most_recent_entry['lda_topics_gridfs_id']).read()
 
     dictionary = pickle.loads(dictionary_pickle)
     corpus = pickle.loads(corpus_pickle)
-    lda_model = pickle.loads(lda_model_pickle)
+    lda_topics = pickle.loads(lda_topics_pickle)
 
-    return dictionary, corpus, lda_model
+    return dictionary, corpus, lda_topics
 
-def lda_write_to_db(dictionary, corpus, lda_model):
+def lda_output_write_to_db(dictionary, corpus, lda_topics):
     db = get_db()
-    collection = db['lda_model']
+    collection = db['lda_output']
     fs = gridfs.GridFS(db)
 
     #serialize objects
     dictionary_pickle = pickle.dumps(dictionary)
     corpus_pickle = pickle.dumps(corpus)
-    lda_model_pickle = pickle.dumps(lda_model)
+    lda_topics_pickle = pickle.dumps(lda_topics)
 
     dictionary_gridfs_id = fs.put(dictionary_pickle)
     corpus_gridfs_id = fs.put(corpus_pickle)
-    lda_model_gridfs_id = fs.put(lda_model_pickle)
+    lda_topics_gridfs_id = fs.put(lda_topics_pickle)
     timestamp = datetime.datetime.now().timestamp()
 
     mongodb_output = {
             'timestamp': timestamp,
             'dictionary_gridfs_id': dictionary_gridfs_id,
             'corpus_gridfs_id': corpus_gridfs_id,
-            'lda_model_gridfs_id': lda_model_gridfs_id
+            'lda_topics_gridfs_id': lda_topics_gridfs_id
             }
 
     collection.insert_one(mongodb_output)

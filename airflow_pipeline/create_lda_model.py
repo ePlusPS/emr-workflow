@@ -52,5 +52,14 @@ def create_lda_model():
     notes = standard_read_from_db('all_notes_cleansed').decode()
     tokens = create_ngram_tokens(notes)
     dictionary, corpus, lda_model = make_model(tokens)
-    lda_write_to_db(dictionary, corpus, lda_model)
 
+    # get topics from the model:
+    topics = lda_model.print_topics(num_words=6)
+    lda_topics_list = []
+    for topic in topics:
+        lda_topics_list.append(topic)
+
+    lda_model_pickle = pickle.dumps(lda_model)
+
+    lda_write_to_db(dictionary, corpus, lda_topics_list)
+    standard_write_to_db('lda_model', lda_model_pickle)
