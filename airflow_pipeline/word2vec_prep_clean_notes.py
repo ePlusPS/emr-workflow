@@ -24,7 +24,7 @@ def combine_and_clean(df):
     return all_notes
 
 def clean_all_notes():
-    df_json_encoded = standard_read_from_db('first_dataframe')
+    df_json_encoded = standard_read_from_db('structured_data_features')
     df_json = df_json_encoded.decode()
     df = pd.read_json(df_json)
 
