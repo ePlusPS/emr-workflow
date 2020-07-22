@@ -18,7 +18,7 @@ class SomeCallableTest(unittest.TestCase):
 
     def test_1(self):
         #assert(somecallable.some_function() == 'some expected value')
-        assert(2 == 2)
+        assert(1 == 1)
 
 if __name__ == '__main__':
     unittest.main()
