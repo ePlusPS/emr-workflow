@@ -66,6 +66,7 @@ def make_patient_summary(df):
                 }
         # add the row for a given patient
         summary_df = summary_df.append(summary_row, ignore_index=True)
+        summary_df.set_index('patient_id', inplace=True)
 
     return summary_df
 
