@@ -2,6 +2,7 @@ import pymongo
 import gridfs
 import datetime
 import pandas as pd
+import pickle
 
 def get_db():
     client = pymongo.MongoClient('mongodb://localhost:27017/')
