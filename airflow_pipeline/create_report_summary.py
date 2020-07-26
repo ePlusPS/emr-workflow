@@ -66,7 +66,6 @@ def make_patient_summary(df):
                 }
         # add the row for a given patient
         summary_df = summary_df.append(summary_row, ignore_index=True)
-        summary_df.set_index('patient_id', inplace=True)
 
     return summary_df
 
@@ -237,6 +236,9 @@ def create_report():
 
     # create hospital summary df
     hospital_summary_df = make_hospital_summary(structured_df, top_n_dict, readmission_word2vec_model, lda_topics)
+
+    patient_summary_df['patient_id'] = patient_summary_df['patient_id'].astype('int64')
+    patient_summary_df.set_index('patient_id', inplace=True)
 
     # serialize patient and hospital summary dataframes
     patient_summary_df_json_encoded = patient_summary_df.to_json().encode()
