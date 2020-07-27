@@ -70,7 +70,7 @@ def make_patient_summary(df):
     return summary_df
 
 
-def make_hospital_summary(df, top_terms_dict, readmission_word2vec, lda_topics):
+def make_hospital_summary(df, top_terms_dict, readmission_word2vec, all_word2vec, lda_topics):
     summary_df = pd.DataFrame()
     summary_row = {}
 
@@ -171,8 +171,11 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec, lda_topics):
     summary_row['top_5_terms_med_readmissions'] = top_terms_dict['top_n_med_readm_df'].columns
     summary_row['top_5_terms_neg_med_readmissions'] = top_terms_dict['top_n_neg_med_readm_df'].columns
 
-    #top 10 icd codes by readmissions from word2vec model
+    #top 10 terms similar to readmissions fromu readmission word2vec model
     summary_row['readmission_themes'] = readmission_word2vec.most_similar('readmission', topn=10)
+
+    #top 10 terms similar to infection from all word2vec model
+    summary_row['infection_themes'] = all_word2vec.most_similar('infection', topn=10)
 
     summary_row['lda_topics'] = lda_topics
 
@@ -231,11 +234,15 @@ def create_report():
     readmission_word2vec_model_pickle = standard_read_from_db('readmission_word2vec')
     readmission_word2vec_model = pickle.loads(readmission_word2vec_model_pickle)
     
+    # Get word2vec model for all notes
+    all_word2vec_model_pickle = standard_read_from_db('word2vec')
+    all_word2vec_model = pickle.loads(all_word2vec_model_pickle)
+
     # Get lda topics
     _, _, lda_topics = lda_output_read_from_db()
 
     # create hospital summary df
-    hospital_summary_df = make_hospital_summary(structured_df, top_n_dict, readmission_word2vec_model, lda_topics)
+    hospital_summary_df = make_hospital_summary(structured_df, top_n_dict, readmission_word2vec_model, all_word2vec_model, lda_topics)
 
     patient_summary_df['patient_id'] = patient_summary_df['patient_id'].astype('int64')
     patient_summary_df.set_index('patient_id', inplace=True)
