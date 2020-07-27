@@ -36,15 +36,13 @@ def create_ngram_tokens(notes):
     for sentence in new_sentences:
         sentence_ngrams=generate_ngrams(sentence, 5)
         all_ngrams+=sentence_ngrams
-    ngrams_concat_tokens = [[ngram] for ngram in all_ngrams]
+    ngrams_concat_tokens = [ngram for ngram in all_ngrams]
     return ngrams_concat_tokens
 
 def make_model(tokens):
     #create corpus, dictionary, and lda model
-    dictionary = gensim.corpora.Dictionary(tokens)
-    corpus = dictionary.doc2bow(tokens)
-    #the statement below doesn't work, changed input to ngram_concat_tokens
-    #corpus = [dictionary.doc2bow(text) for text in all_ngrams]
+    dictionary = gensim.corpora.Dictionary([tokens])
+    corpus = [dictionary.doc2bow([text]) for text in tokens]
     lda_model=gensim.models.LdaMulticore(corpus=corpus,num_topics=5,id2word=dictionary,passes=10,workers=75)
 
     return dictionary, corpus, lda_model
@@ -62,5 +60,5 @@ def create_lda_model():
 
     lda_model_pickle = pickle.dumps(lda_model)
 
-    lda_write_to_db(dictionary, corpus, lda_topics_list)
+    lda_output_write_to_db(dictionary, corpus, lda_topics_list)
     standard_write_to_db('lda_model', lda_model_pickle)
