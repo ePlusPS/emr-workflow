@@ -1,9 +1,10 @@
 import pandas as pd
 from workflow_read_and_write import standard_read_from_db, standard_write_to_db, one_hot_read_from_db, one_hot_write_to_db, standard_write_to_db
 
+
 def combine():
-    #infection_one_hot_df_json_encoded, _ = one_hot_read_from_db('infection_one_hot')
-    readmission_one_hot_df_json_encoded, _ = one_hot_read_from_db('readmission_one_hot')
+    # infection_one_hot_df_json_encoded, _ = one_hot_read_from_db('infection_one_hot')
+    readmission_one_hot_df_json_encoded = one_hot_read_from_db('readmission_one_hot')
     structured_features_df_json_encoded = standard_read_from_db('structured_data_features')
     #vitals_ngrams_df_json_encoded = standard_read_from_db('vitals_ngrams')
     #ner_processed_df_json_encoded = standard_read_from_db('post_ner_inference')

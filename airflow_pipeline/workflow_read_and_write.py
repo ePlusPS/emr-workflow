@@ -4,10 +4,12 @@ import datetime
 import pandas as pd
 import pickle
 
+
 def get_db():
     client = pymongo.MongoClient('mongodb://localhost:27017/')
     db = client['emr_steps']
     return db
+
 
 def standard_read_from_db(collection_name):
     db = get_db()
@@ -17,6 +19,7 @@ def standard_read_from_db(collection_name):
     prev_step_output = fs.get(most_recent_entry['gridfs_id']).read()
     return prev_step_output
 
+
 def standard_write_to_db(collection_name, step_output):
     db = get_db()
     fs = gridfs.GridFS(db)
@@ -25,6 +28,7 @@ def standard_write_to_db(collection_name, step_output):
     gridfs_id = fs.put(step_output)
     mongodb_output = {'timestamp':timestamp, 'gridfs_id':gridfs_id}
     collection.insert_one(mongodb_output)
+
 
 def lda_output_read_from_db():
     db = get_db()
@@ -41,6 +45,7 @@ def lda_output_read_from_db():
     lda_topics = pickle.loads(lda_topics_pickle)
 
     return dictionary, corpus, lda_topics
+
 
 def lda_output_write_to_db(dictionary, corpus, lda_topics):
     db = get_db()
@@ -66,22 +71,23 @@ def lda_output_write_to_db(dictionary, corpus, lda_topics):
 
     collection.insert_one(mongodb_output)
 
-def train_ner_write_to_db(tokenizer_pickle, bert_model_pickle, label_ids_pickle):
-        db = get_db()
-        fs = gridfs.GridFS(db)
-        collection = db['trained_ner']
-        timestamp = datetime.datetime.now().timestamp()
-        tokenizer_gridfs_id = fs.put(tokenizer_pickle)
-        bert_model_gridfs_id = fs.put(bert_model_pickle)
-        label_ids_gridfs_id = fs.put(label_ids_pickle)
-        mongodb_output = {
-                'timestamp':timestamp,
-                'tokenizer_gridfs_id':tokenizer_gridfs_id,
-                'bert_model_gridfs_id':bert_model_gridfs_id,
-                'label_ids_gridfs_id': label_ids_gridfs_id
-                }
 
-        collection.insert_one(mongodb_output)
+def train_ner_write_to_db(tokenizer_pickle, bert_model_pickle, label_ids_pickle):
+    db = get_db()
+    fs = gridfs.GridFS(db)
+    collection = db['trained_ner']
+    timestamp = datetime.datetime.now().timestamp()
+    tokenizer_gridfs_id = fs.put(tokenizer_pickle)
+    bert_model_gridfs_id = fs.put(bert_model_pickle)
+    label_ids_gridfs_id = fs.put(label_ids_pickle)
+    mongodb_output = {
+            'timestamp':timestamp,
+            'tokenizer_gridfs_id':tokenizer_gridfs_id,
+            'bert_model_gridfs_id':bert_model_gridfs_id,
+            'label_ids_gridfs_id': label_ids_gridfs_id
+            }
+    collection.insert_one(mongodb_output)
+
 
 def train_ner_read_from_db():
     db = get_db()
@@ -93,6 +99,7 @@ def train_ner_read_from_db():
     bert_model_pickle = fs.get(most_recent_entry['bert_model_gridfs_id'])
     label_ids_pickle = fs.get(most_recent_entry['label_ids_gridfs_id'])
     return tokenizer_pickle, bert_model_pickle, label_ids_pickle
+
 
 def one_hot_write_to_db(updated_df_json_encoded, term_cos_simil_df_json_encoded, collection_name):
     db = get_db()
@@ -111,6 +118,7 @@ def one_hot_write_to_db(updated_df_json_encoded, term_cos_simil_df_json_encoded,
 
     collection.insert_one(mongodb_output)
 
+
 def one_hot_read_from_db(collection_name):
     db = get_db()
     fs = gridfs.GridFS(db)
@@ -121,6 +129,7 @@ def one_hot_read_from_db(collection_name):
     term_cos_simil_df_json_encoded = fs.get(most_recent_entry['term_cos_simil_df_gridfs_id']).read()
 
     return updated_df_json_encoded, term_cos_simil_df_json_encoded
+
 
 def tpot_write_to_db(tpot_pipeline_code_encoded, score_encoded, collection_name):
     db = get_db()
@@ -139,6 +148,7 @@ def tpot_write_to_db(tpot_pipeline_code_encoded, score_encoded, collection_name)
 
     collection.insert_one(mongodb_output)
 
+
 def tpot_read_from_db(collection_name):
     db = get_db()
     fs = gridfs.GridFS(db)
@@ -149,6 +159,7 @@ def tpot_read_from_db(collection_name):
     score_encoded = fs.get(most_recent_entry['score_gridfs_id']).read()
 
     return tpot_pipeline_code_encoded, score_encoded
+
 
 def readmission_classifier_write_to_db(df_json_encoded, classifier_pickle):
     db = get_db()
@@ -167,6 +178,7 @@ def readmission_classifier_write_to_db(df_json_encoded, classifier_pickle):
 
     collection.insert_one(mongodb_output)     
 
+
 def readmission_classifier_read_from_db():
     db = get_db()
     fs = gridfs.GridFS(db)
@@ -177,6 +189,7 @@ def readmission_classifier_read_from_db():
     classifier_pickle = fs.get(most_recent_entry['classifier_gridfs_id'])
 
     return df_json_encoded, classifier_pickle
+
 
 def xgb_write_to_db(collection_name,df_json_encoded, top_n_df_json_encoded, xgb_pickle):
     db = get_db()
@@ -197,6 +210,7 @@ def xgb_write_to_db(collection_name,df_json_encoded, top_n_df_json_encoded, xgb_
 
     collection.insert_one(mongodb_output)
 
+
 def xgb_read_from_db(collection_name):
     db = get_db()
     fs = gridfs.GridFS(db)
@@ -208,6 +222,7 @@ def xgb_read_from_db(collection_name):
     xgb_pickle = fs.get(most_recent_entry['xgb_gridfs_id'])
 
     return df_json_encoded, top_n_df_json_encoded, xgb_pickle
+
 
 def summary_report_write_to_db(patient_df_json_encoded, hospital_df_json_encoded):
     db = get_db()
@@ -225,6 +240,7 @@ def summary_report_write_to_db(patient_df_json_encoded, hospital_df_json_encoded
         }
 
     collection.insert_one(mongodb_output)
+
 
 def summary_report_read_from_db():
     db = get_db()
