@@ -47,8 +47,8 @@ def concatenate(lists):
 def add_brackets(text, add=ADD_BRACKETS):
     return '[' + text + ']' if add else text
 
-#out_file = open('all_notes_label_lines.txt', 'a')
-out_file = open('/home/ubuntu/emr-workflow/airflow_pipeline/all_notes_label_lines.txt', 'w+')
+out_file = open('/home/ubuntu/emr-workflow/airflow_pipeline/all_notes_label_lines.txt', 'a')
+#out_file = open('/home/ubuntu/emr-workflow/airflow_pipeline/all_notes_label_lines.txt', 'w+')
 
 if not os.path.exists(CHECKPOINT_DIR):
     raise ValueError(f'Checkpoint directory not found at {CHECKPOINT_DIR}')
