@@ -21,7 +21,12 @@ def extract_entities(note):
                 if words[word_index-1] == 'no' or words[word_index-1] == 'not':
                     possible_negation = words[word_index-1] + '_'
                 if 'B-MEDICATION' in words[word_index]:
-                    while ent_end < len(words) and 'I-MEDICATION' in words[ent_end]:
+                    while ent_end < len(words) and ('I-MEDICATION' in words[ent_end] 
+                                                    or '-NUMBER]' in words[ent_end]
+                                                    or '-TIME_UNIT]' in words[ent_end]
+                                                    or '-VOLUME_UNIT]' in words[ent_end]
+                                                    or '-MASS_UNIT]' in words[ent_end]
+                                                    or '-FORM_UNIT]' in words[ent_end]):
                         ent_end += 1
                     medication = possible_negation
                     for i,sub_ent in enumerate(words[word_index:ent_end]):
@@ -34,7 +39,11 @@ def extract_entities(note):
                     else:
                         medications.append(medication)
                 elif 'B-DIAGNOSIS' in words[word_index]:
-                    while ent_end < len(words) and 'I-DIAGNOSIS' in words[ent_end]:
+                    while ent_end < len(words) and ('I-DIAGNOSIS' in words[ent_end]
+                                                    or '-NUMBER]' in words[ent_end]
+                                                    or '-TIME_UNIT]' in words[ent_end]
+                                                    or '-VOLUME_UNIT]' in words[ent_end]
+                                                    or '-MASS_UNIT]' in words[ent_end]):
                         ent_end += 1
                     feature = possible_negation
                     for i,sub_ent in enumerate(words[word_index:ent_end]):
