@@ -16,7 +16,7 @@ def combine_and_clean(df):
         all_notes += ' ' + note
 
     all_notes = all_notes.replace('\n', '')
-    all_notes = all_notes.replace('_______________________________________________________________________________', '')
+    all_notes = all_notes.replace('_', '')
     all_notes = all_notes.replace("|", ' ')
     all_notes = re.sub(r'\( (.*) \)', r'(\1)', all_notes)
     all_notes = re.sub(' +', ' ', all_notes.strip())
