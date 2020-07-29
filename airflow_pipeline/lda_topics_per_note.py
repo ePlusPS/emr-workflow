@@ -1,5 +1,7 @@
 from workflow_read_and_write import standard_read_from_db, lda_output_read_from_db, standard_write_to_db
 from nltk import sent_tokenize
+import pandas as pd
+import re
 
 def generate_ngrams(s, n):
     # Convert to lowercases
@@ -64,7 +66,7 @@ def get_ngrams_per_note():
     df_json_encoded = standard_read_from_db('structured_data_features')
     df = pd.read_json(df_json_encoded.decode())
 
-    _, _, lda_topics = lda_read_from_db()
+    _, _, lda_topics = lda_output_read_from_db()
     lda_topics_list = make_lda_topics_list(lda_topics)
 
     lda_ngrams_column = create_lda_ngrams_column(df, lda_topics_list)
