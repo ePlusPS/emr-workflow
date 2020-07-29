@@ -32,7 +32,7 @@ def train_xgb_model(df, feat_one_hot):
 def add_predictions_column(df, bst, feat_one_hot):
     data = xgb.DMatrix(feat_one_hot)
     predictions = bst.predict(data)
-    df['xgb_feat_ent_pred'] = predictions
+    df['xgb_lda_pred'] = predictions
 
     return df
 
