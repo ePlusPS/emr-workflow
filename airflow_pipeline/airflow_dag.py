@@ -37,6 +37,7 @@ import readmission_tf_prob_to_likert
 import create_report_summary
 import write_summary_report_to_directory
 import create_lda_model
+import lda_topics_per_note
 
 import placeholder
 
@@ -265,6 +266,12 @@ lda_model_operator = PythonOperator(
     dag = dag
     )
 
+lda_per_note_operator = PythonOperator(
+    task_id = 'lda_topics_per_note',
+    python_callable = lda_topics_per_note.get_ngrams_per_note,
+    dag = dag
+    )
+
 df_from_api_operator.set_downstream(structured_features_operator)
 structured_features_operator.set_downstream([
     all_word2vec_clean_notes_operator, 
@@ -309,7 +316,7 @@ readmission_tensorflow_operator.set_downstream(readmission_prob_to_likert_operat
 readmission_prob_to_likert_operator.set_downstream(summary_report_operator)
 los_tensorflow_operator.set_downstream(summary_report_operator)
 readmission_word2vec_operator.set_downstream(summary_report_operator)
-lda_model_operator.set_downstream(summary_report_operator)
+lda_model_operator.set_downstream([summary_report_operator, lda_per_note_operator])
 summary_report_operator.set_downstream(write_to_dash_operator)
 #infected_one_hot_operator.set_downstream(combine_all_dataframes_operator)
 #readmission_one_hot_operator.set_downstream(combine_all_dataframes_operator)
