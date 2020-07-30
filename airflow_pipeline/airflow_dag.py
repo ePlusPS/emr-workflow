@@ -26,12 +26,14 @@ import xgb_readmission_feature_entities
 import xgb_readmission_medication_entities
 import xgb_readmission_neg_feature_entities
 import xgb_readmission_neg_medication_entities
+import xgb_readmission_lda_topics
 import combine_readmission_probabilities_tensorflow
 import xgb_los_demographics
 import xgb_los_feature_entities
 import xgb_los_medication_entities
 import xgb_los_neg_feature_entities
 import xgb_los_neg_medication_entities
+import xgb_los_lda_topics
 import combine_los_estimates_tensorflow
 import readmission_tf_prob_to_likert
 import create_report_summary
@@ -188,6 +190,11 @@ xgb_readmission_neg_med_operator = PythonOperator(
     dag = dag
     )
 
+xgb_readmission_lda_operator = PythonOperator(
+    task_id = 'readmision_xgb_lda_topics',
+    python_callable = xgb_readmission_lda_topics.make_predictions,
+    dag = dag)
+
 xgb_los_demo_operator = PythonOperator(
     task_id = 'los_xgb_demographics',
     python_callable = xgb_los_demographics.make_predictions,
@@ -215,6 +222,12 @@ xgb_los_med_operator = PythonOperator(
 xgb_los_neg_med_operator = PythonOperator(
     task_id = 'los_xgb_neg_medication_entities',
     python_callable = xgb_los_neg_medication_entities.make_predictions,
+    dag = dag
+    )
+
+xgb_los_lda_operator = PythonOperator(
+    task_id = 'los_xgb_lda_topics',
+    python_callable = xgb_los_lda_topics.make_predictions,
     dag = dag
     )
 
@@ -295,16 +308,19 @@ ner_entity_columns_operator.set_downstream([
     xgb_readmission_neg_feat_operator,
     xgb_readmission_med_operator,
     xgb_readmission_neg_med_operator,
+    xgb_readmission_lda_operator,
     xgb_los_demo_operator,
     xgb_los_feat_operator,
     xgb_los_neg_feat_operator,
     xgb_los_med_operator,
-    xgb_los_neg_med_operator])
+    xgb_los_neg_med_operator,
+    xgb_los_lda_operator])
 xgb_los_demo_operator.set_downstream(los_tensorflow_operator)
 xgb_los_feat_operator.set_downstream(los_tensorflow_operator)
 xgb_los_neg_feat_operator.set_downstream(los_tensorflow_operator)
 xgb_los_med_operator.set_downstream(los_tensorflow_operator)
 xgb_los_neg_med_operator.set_downstream(los_tensorflow_operator)
+xgb_los_lda_operator.set_downstream(los_tensorflow_operator)
 readmission_classifier_prep_operator.set_downstream(readmission_classifier_train_predict_operator)
 readmission_classifier_train_predict_operator.set_downstream(readmission_tensorflow_operator)
 xgb_readmission_demo_operator.set_downstream(readmission_tensorflow_operator)
@@ -312,11 +328,13 @@ xgb_readmission_feat_operator.set_downstream(readmission_tensorflow_operator)
 xgb_readmission_neg_feat_operator.set_downstream(readmission_tensorflow_operator)
 xgb_readmission_med_operator.set_downstream(readmission_tensorflow_operator)
 xgb_readmission_neg_med_operator.set_downstream(readmission_tensorflow_operator)
+xgb_readmission_lda_operator.set_downstream(readmission_tensorflow_operator)
 readmission_tensorflow_operator.set_downstream(readmission_prob_to_likert_operator)
 readmission_prob_to_likert_operator.set_downstream(summary_report_operator)
 los_tensorflow_operator.set_downstream(summary_report_operator)
 readmission_word2vec_operator.set_downstream(summary_report_operator)
-lda_model_operator.set_downstream([summary_report_operator, lda_per_note_operator])
+lda_model_operator.set_downstream(lda_per_note_operator)
+lda_per_note_operator.set_downstream(ner_entity_columns_operator)
 summary_report_operator.set_downstream(write_to_dash_operator)
 #infected_one_hot_operator.set_downstream(combine_all_dataframes_operator)
 #readmission_one_hot_operator.set_downstream(combine_all_dataframes_operator)
