@@ -39,10 +39,13 @@ def make_predictions():
     xgb_med_df = pd.read_json(xgb_med_df_json_encoded.decode())
     top_n_med_df = pd.read_json(top_n_med_df_json_encoded.decode())
 
-    #add xgb_neg_med_df
     xgb_neg_med_df_json_encoded, top_n_neg_med_df_json_encoded, _ = xgb_read_from_db('neg_med_xgb_readmission')
     xgb_neg_med_df = pd.read_json(xgb_neg_med_df_json_encoded.decode())
     top_n_neg_med_df = pd.read_json(top_n_neg_med_df_json_encoded.decode())
+
+    xgb_lda_df_json_encoded, top_n_lda_df_json_encoded, _ = xgb_read_from_db('lda_xgb_readmission')
+    xgb_lda_df = pd.read_json(xgb_lda_df_json_encoded.decode())
+    top_n_lda_df = pd.read_json(top_n_lda_df_json_encoded.decode())
 
     prev_probas = pd.DataFrame()
     prev_probas['readmission_classifier_probabilities'] = readmission_classifier_df['readmission_classifier_probabilities']
@@ -51,8 +54,15 @@ def make_predictions():
     prev_probas['xgb_neg_feat_ent_pred'] =  xgb_neg_feat_df['xgb_feat_ent_pred']
     prev_probas['xgb_med_ent_pred'] = xgb_med_df['xgb_med_ent_pred']
     prev_probas['xgb_neg_med_ent_pred'] = xgb_med_df['xgb_med_ent_pred']
+    prev_probas['xgb_lda_pred'] = xgb_lda_df['xgb_lda_pred']
 
-    tf_input = pd.concat([prev_probas, top_n_demo_df, top_n_feat_df, top_n_neg_feat_df, top_n_med_df, top_n_neg_med_df], axis=1)
+    tf_input = pd.concat(
+            [prev_probas, 
+            top_n_demo_df, 
+            top_n_feat_df, 
+            top_n_neg_feat_df, 
+            top_n_med_df, 
+            top_n_neg_med_df], axis=1)
 
     print('prev_probas: '+prev_probas.columns)
     print('top_n_demo_df: '+top_n_demo_df.columns)
