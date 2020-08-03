@@ -18,6 +18,7 @@ import create_readmission_word2vec_model
 import ner_prep_clean_notes
 import make_all_note_lines_file
 import inference_per_100000
+import add_labeled_notes_column
 import create_entity_columns
 import readmission_classifier_prep_tokenize_notes
 import readmission_classifier_train_and_predict
@@ -97,6 +98,12 @@ readmission_word2vec_operator = PythonOperator(
 label_with_ner_operator = PythonOperator(
     task_id = 'label_notes_with_ner_model',
     python_callable = inference_per_100000.label_notes,
+    dag = dag
+    )
+
+labeled_notes_column_operator = PythonOperator(
+    task_id = 'make_labeled_notes_column',
+    python_callable = add_labeled_notes_column.create_labeled_notes_column,
     dag = dag
     )
 
@@ -290,18 +297,18 @@ structured_features_operator.set_downstream([
     all_word2vec_clean_notes_operator, 
     readmission_word2vec_clean_notes_operator, 
     ner_clean_operator, 
-    readmission_classifier_prep_operator,
-    lda_model_operator])
+    readmission_classifier_prep_operator])
 
 readmission_word2vec_clean_notes_operator.set_downstream(readmission_word2vec_tokenize_notes_operator)
 readmission_word2vec_tokenize_notes_operator.set_downstream(readmission_word2vec_operator)
 readmission_word2vec_operator.set_downstream(readmission_one_hot_operator)
 all_word2vec_clean_notes_operator.set_downstream(all_word2vec_tokenize_notes_operator)
 all_word2vec_tokenize_notes_operator.set_downstream(all_word2vec_operator)
-all_word2vec_operator.set_downstream(infected_one_hot_operator)
+all_word2vec_operator.set_downstream([infected_one_hot_operator, lda_model_operator])
 ner_clean_operator.set_downstream(ner_input_text_operator)
 ner_input_text_operator.set_downstream(label_with_ner_operator)
-label_with_ner_operator.set_downstream(ner_entity_columns_operator)
+label_with_ner_operator.set_downstream(labeled_notes_column_operator)
+labeled_notes_column_operator.set_downstream(ner_entity_columns_operator)
 ner_entity_columns_operator.set_downstream([
     xgb_readmission_demo_operator, 
     xgb_readmission_feat_operator,
