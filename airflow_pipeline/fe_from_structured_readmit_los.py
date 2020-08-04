@@ -33,7 +33,7 @@ def compare_times_for_readmission(row_admittime, sub_row_dischtime):
     readmit_threshold = pd.to_timedelta('30 days 00:00:00')
     zero_timedelta = pd.to_timedelta('0 days 00:00:00')
     
-    time_between_visits = row_admittime - sub_row_dischtime
+    time_between_visits = abs(row_admittime - sub_row_dischtime)
 
     readmit = False
     #first conditional statement filters out future subrow visits from the current row
