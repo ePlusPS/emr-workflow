@@ -59,6 +59,8 @@ def add_readmission_column(df):
             if subrow['admission_id'] != row['admission_id']:
                 sub_dischtime = pd.to_datetime(subrow['dischtime'])
                 readmit = compare_times_for_readmission(current_admittime, sub_dischtime)
+                if readmit:
+                    break
         readmit_list.append(readmit)
     df['readmission'] = readmit_list
     return df
