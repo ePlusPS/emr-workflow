@@ -16,13 +16,7 @@ def get_note_lines_from_file():
     in_file.close()
     return lines
 
-def create_labeled_notes_column():
-    lines = get_note_lines_from_file()
-
-    df_json_encoded = standard_read_from_db('ner_cleaned_notes')
-    df = pd.read_json(df_json_encoded.decode())
-    length_array = get_line_length_array(df)
-
+def make_column(lines, length_array):
     begin = 0
     end = 0
     labeled_notes = []
@@ -34,6 +28,16 @@ def create_labeled_notes_column():
         for line in note_lines:
             note += line
         labeled_notes.append(note)
+    return labeled_notes
+
+def create_labeled_notes_column():
+    lines = get_note_lines_from_file()
+
+    df_json_encoded = standard_read_from_db('ner_cleaned_notes')
+    df = pd.read_json(df_json_encoded.decode())
+    length_array = get_line_length_array(df)
+
+    labeled_notes = make_column(lines, length_array)
 
     df['labeled_notes'] = labeled_notes
     df_json_encoded = df.to_json().encode()
