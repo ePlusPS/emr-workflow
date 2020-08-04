@@ -95,7 +95,23 @@ class SomeCallableTest(unittest.TestCase):
         combined_admission = combined[0]
         keys = list(combined_admission.keys())
 
-        expected_keys = ['admission_id', 'admittime', 'dischtime', 'deathtime', 'patient_id', 'insurance', 'language', 'religion', 'marital_status', 'ethnicity', 'diagnosis','notes','icd_codes', 'gender','dob']
+        expected_keys = [
+                'admission_id', 
+                'admittime', 
+                'dischtime', 
+                'deathtime', 
+                'patient_id', 
+                'insurance', 
+                'language', 
+                'religion', 
+                'marital_status', 
+                'ethnicity', 
+                'diagnosis',
+                'notes',
+                'icd_codes', 
+                'gender',
+                'dob'
+                ]
 
         check_vals = True
         if len(keys) != len(expected_keys):
