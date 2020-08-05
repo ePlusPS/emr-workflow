@@ -12,7 +12,7 @@ def make_one_hot(df):
     return feat_one_hot
 
 def train_xgb_model(df, feat_one_hot):
-    labels = pd.DataFrame(df['readmission'])
+    labels = pd.DataFrame(df['los'])
     data = xgb.DMatrix(feat_one_hot, label=labels)
 
     #tuning opportunity (grid search)
