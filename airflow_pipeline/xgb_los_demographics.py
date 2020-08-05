@@ -46,7 +46,7 @@ def train_xgb_model(df, one_hot_df):
             'predictor':'gpu_predictor', 
             'subsample':0.5, 
             'sampling_method': 'uniform', 
-            'objective':'reg:linear'
+            'objective':'reg:squarederror'
             }
 
     bst = xgb.train(parameters, data)
