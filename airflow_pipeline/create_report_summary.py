@@ -15,8 +15,6 @@ def make_patient_summary(df):
         is_patient = df['patient_id'] == pat_id
         # apply filter
         pat_df = df[is_patient]
-        # change admittime column to datetime data type
-        #pat_df['admittime'] = pd.to_datetime(pat_df['admittime'], utc=True)
         
         # get the number of readmissions
         num_readmissions = pat_df['readmission'].sum()
@@ -47,8 +45,6 @@ def make_patient_summary(df):
         pat_df.sort_values(by=['admittime'], inplace=True, ascending=True)
         age = pat_df.iloc[-1]['age']
         gender = pat_df.iloc[-1]['gender']
-
-        #MW: not currently in script for the first dataframe, I have some code snippets for these values though.
         insurance = pat_df.iloc[-1]['insurance']
         dx_description = pat_df.iloc[-1]['diagnosis']
 
@@ -86,7 +82,7 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec, all_word2vec
 
     summary_row['total_readmissions'] = df['readmission'].sum()
     #filter for other readmission counts
-    readmission_df = df[df['readmission']]
+    readmission_df = df[df['readmission'].astype('bool')]
     for val in pos_ins_vals:
         is_val = readmission_df['insurance'] == val
         filtered_df = readmission_df[is_val]
@@ -151,7 +147,7 @@ def make_hospital_summary(df, top_terms_dict, readmission_word2vec, all_word2vec
         # compute average los
         avg_los = filtered_df['los'].mean()
         # add entry to the dictionary: icd code is the key, average los is the value
-        icd_codes_los_dict['ICD Code: ' + code + ' average los'] = avg_los
+        icd_codes_los_dict['ICD Code: ' + str(code) + ' los_avg'] = avg_los
     # sort the dictionary based on average los values
     icd_los_sorted = {k: v for k, v in sorted(icd_codes_los_dict.items(), key=lambda item: item[1])}
     # get top 10 icd codes from the sorted dictionary
