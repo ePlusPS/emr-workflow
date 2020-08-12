@@ -22,9 +22,9 @@ class SomeCallableTest(unittest.TestCase):
         df=df.append(row4, ignore_index=True)
         df=df.append(row5, ignore_index=True)
 
-        likert_values = readmission_tf_prob_to_likert(df)
+        likert_values = readmission_tf_prob_to_likert.make_likert_column(df)
         expected_values = ['Very Unlikely Readmission','Very Unlikely Readmission','Unlikely Readmission','Very Likely Readmission','Likely Readmission']
-        assert(liker_values == expected_values)
+        assert(likert_values == expected_values)
 
 if __name__ == '__main__':
     unittest.main()
