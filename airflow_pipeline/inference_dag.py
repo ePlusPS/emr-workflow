@@ -6,7 +6,7 @@ import get_new_records_for_predictions
 import new_records_ner_prep_clean_notes
 import new_records_make_ner_input_file
 import new_records_inference_per_100000
-import new_records_add_labeld_notes_column
+import new_records_add_labeled_notes_column
 import new_records_create_entity_columns
 
 default_args = {
