@@ -62,7 +62,8 @@ def make_predictions():
             top_n_feat_df, 
             top_n_neg_feat_df, 
             top_n_med_df, 
-            top_n_neg_med_df], axis=1)
+            top_n_neg_med_df,
+            top_n_lda_df], axis=1)
 
     print('prev_probas: '+prev_probas.columns)
     print('top_n_demo_df: '+top_n_demo_df.columns)
