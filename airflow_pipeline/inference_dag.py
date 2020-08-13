@@ -8,6 +8,7 @@ import new_records_make_ner_input_file
 import new_records_inference_per_100000
 import new_records_add_labeled_notes_column
 import new_records_create_entity_columns
+import new_records_lda_topics_per_note
 
 default_args = {
     'owner': 'EMR Appliance Pipeline',
@@ -52,7 +53,13 @@ ner_entity_column_operator = PythonOperator(
     dag = dag
     )
 
-new_records_operator.set_downstream([ner_clean_notes_operator])
+lda_topics_operator = PythonOperator(
+    task_id = 'lda_topics_per_note',
+    python_callable = new_records_lda_topics_per_note.get_ngrams_per_note,
+    dag = dag
+    )
+
+new_records_operator.set_downstream([ner_clean_notes_operator, lda_topics_operator])
 
 ner_clean_notes_operator.set_downstream(ner_input_file_operator)
 ner_input_file_operator.set_downstream(ner_label_notes_operator)
