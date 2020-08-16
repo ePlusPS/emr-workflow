@@ -63,8 +63,8 @@ def make_predictions():
 
     los = xgb_demo_df['los']
 
-    model = create_model(prev_probas, los)
-    model_predictions = predict_with_model(prev_probas, model)
+    model = create_model(tf_input, los)
+    model_predictions = predict_with_model(tf_input, model)
     tf_input['keras_pred'] = model_predictions
     print(tf_input.columns)
 
