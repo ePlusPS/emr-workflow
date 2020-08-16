@@ -9,6 +9,7 @@ import new_records_inference_per_100000
 import new_records_add_labeled_notes_column
 import new_records_create_entity_columns
 import new_records_lda_topics_per_note
+import new_records_demographics_one_hot
 
 default_args = {
     'owner': 'EMR Appliance Pipeline',
@@ -59,7 +60,13 @@ lda_topics_operator = PythonOperator(
     dag = dag
     )
 
-new_records_operator.set_downstream([ner_clean_notes_operator, lda_topics_operator])
+demographics_one_hot_operator = PythonOperator(
+    task_id = 'make_demo_one_hot_df',
+    python_callable = new_records_demographics_one_hot.new_records_demo_one_hot,
+    dag = dag
+    )
+
+new_records_operator.set_downstream([ner_clean_notes_operator, lda_topics_operator, demographics_one_hot_operator])
 
 ner_clean_notes_operator.set_downstream(ner_input_file_operator)
 ner_input_file_operator.set_downstream(ner_label_notes_operator)
