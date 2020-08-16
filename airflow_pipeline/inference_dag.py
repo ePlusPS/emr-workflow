@@ -68,7 +68,7 @@ demographics_one_hot_operator = PythonOperator(
     dag = dag
     )
 
-tf_los_input_operator = PythOperator(
+tf_los_input_operator = PythonOperator(
     task_id = 'make_tf_input_los',
     python_callable = new_records_make_los_tf_input.make_input,
     dag = dag
