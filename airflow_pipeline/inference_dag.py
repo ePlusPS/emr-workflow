@@ -86,3 +86,7 @@ ner_clean_notes_operator.set_downstream(ner_input_file_operator)
 ner_input_file_operator.set_downstream(ner_label_notes_operator)
 ner_label_notes_operator.set_downstream(ner_labeled_notes_column_operator)
 ner_labeled_notes_column_operator.set_downstream(ner_entity_column_operator)
+
+lda_topics_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
+ner_entity_column_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
+demographics_one_hot_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
