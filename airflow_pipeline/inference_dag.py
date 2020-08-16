@@ -10,6 +10,8 @@ import new_records_add_labeled_notes_column
 import new_records_create_entity_columns
 import new_records_lda_topics_per_note
 import new_records_demographics_one_hot
+import new_records_make_los_tf_input
+import new_records_make_readmission_tf_input
 
 default_args = {
     'owner': 'EMR Appliance Pipeline',
@@ -63,6 +65,18 @@ lda_topics_operator = PythonOperator(
 demographics_one_hot_operator = PythonOperator(
     task_id = 'make_demo_one_hot_df',
     python_callable = new_records_demographics_one_hot.new_records_demo_one_hot,
+    dag = dag
+    )
+
+tf_los_input_operator = PythOperator(
+    task_id = 'make_tf_input_los',
+    python_callable = new_records_make_los_tf_input.make_input,
+    dag = dag
+    )
+
+tf_readm_input_operator = PythonOperator(
+    task_id = 'make_tf_input_readmission',
+    python_callable = new_records_make_readmission_tf_input.make_input,
     dag = dag
     )
 
