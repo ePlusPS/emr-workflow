@@ -54,7 +54,7 @@ def make_predictions():
 
     tf_input = pd.concat(
             [#prev_probas,
-            #top_n_demo_df, 
+            top_n_demo_df, 
             top_n_feat_df, 
             top_n_neg_feat_df, 
             top_n_med_df, 
