@@ -8,7 +8,7 @@ def generate_ngrams(s, n):
     s = s.lower()
     # Break sentence into tokens, remove empty tokens
     tokens = [token for token in s.split(" ") if token != ""]
-    tokens = [token for token in s.split(" ") if len(token)>=3]
+    tokens = [token for token in s.split(" ") if len(token)>1]
     # Use the zip function to help us generate n-grams
     # Concatentate the tokens into ngrams and return
     ngrams = zip(*[tokens[i:] for i in range(n)])
@@ -27,9 +27,6 @@ def clean_note(note):
     note = note.replace('\n', '')
     note = note.replace('_', '')
     note = note.replace("|", ' ')
-    #note = re.sub(' +', ' ', note)
-    #note = re.sub(r'\( (.*) \)', r'(\1)', note)
-    #note = re.sub(r' ([,.:])', r'\1', note)
     note = note.replace(' +', ' ')
     note = note.replace('*','')
     note = note.replace('[','')
@@ -55,7 +52,9 @@ def create_lda_ngrams_column(df, lda_topics_list):
         for lda_topic in lda_topics_list:
             if lda_topic in ngrams:
                 topics_per_row.append(lda_topic)
-
+        # handle empty list
+        if len(topics_per_row) == 0:
+            topics_per_row.append('0')
         lda_ngrams_column.append(topics_per_row)
     
     return lda_ngrams_column

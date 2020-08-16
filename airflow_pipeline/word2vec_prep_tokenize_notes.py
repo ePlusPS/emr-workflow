@@ -37,7 +37,7 @@ need to investigate different parameter settings and different Models (FastText,
 """
 def tokenize(text):
     tokens=word_tokenize(text)
-    tokens=[token for token in tokens if len(token)>2]
+    tokens=[token for token in tokens if len(token)>1]
     tokens=[token for token in tokens if token not in en_stop]
     return tokens
 
