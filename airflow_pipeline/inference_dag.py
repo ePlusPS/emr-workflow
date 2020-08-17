@@ -13,7 +13,7 @@ import new_records_demographics_one_hot
 import new_records_make_los_tf_input
 import new_records_make_readmission_tf_input
 import new_records_tf_los_predictions
-import new_records_tf_readmissions_predictions
+import new_records_tf_readmission_predictions
 
 default_args = {
     'owner': 'EMR Appliance Pipeline',
@@ -106,4 +106,4 @@ ner_entity_column_operator.set_downstream([tf_los_input_operator, tf_readm_input
 demographics_one_hot_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
 
 tf_los_input_operator.set_downstream(tf_los_prediction_operator)
-tf_readmission_input_operator.set_downstream(tf_readmission_prediction_operator)
+tf_readm_input_operator.set_downstream(tf_readmission_prediction_operator)
