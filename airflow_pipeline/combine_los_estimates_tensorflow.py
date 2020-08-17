@@ -69,4 +69,4 @@ def make_predictions():
     print(tf_input.columns)
 
     tf_input_json_encoded = tf_input.to_json().encode()
-    standard_write_to_db('readmission_tensorflow_predictions', tf_input_json_encoded)
+    standard_write_to_db('los_tensorflow_predictions', tf_input_json_encoded)
