@@ -1,5 +1,6 @@
 from workflow_read_and_write import readmission_classifier_read_from_db, xgb_read_from_db, standard_write_to_db
 import pandas as pd
+import datetime
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -70,3 +71,9 @@ def make_predictions():
 
     tf_input_json_encoded = tf_input.to_json().encode()
     standard_write_to_db('los_tensorflow_predictions', tf_input_json_encoded)
+
+    now = datetime.datetime.now()
+    str_datetime = now.strftime("%m/%d/%Y_%H:%M:%S")
+    model.save('tf_los/most_recent')
+    model.save('tf_los/'+str_datetime)
+
