@@ -66,7 +66,7 @@ def make_predictions():
 
     model = create_model(tf_input, los)
     model_predictions = predict_with_model(tf_input, model)
-    tf_input['keras_pred'] = model_predictions
+    tf_input['tf_los_pred'] = model_predictions
     print(tf_input.columns)
 
     tf_input_json_encoded = tf_input.to_json().encode()

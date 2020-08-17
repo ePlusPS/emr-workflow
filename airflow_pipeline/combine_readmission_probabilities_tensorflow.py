@@ -78,7 +78,7 @@ def make_predictions():
 
     model = create_model(tf_input, readmissions)
     model_predictions = predict_with_model(tf_input, model)
-    tf_input['keras_pred'] = model_predictions
+    tf_input['tf_readmission_pred'] = model_predictions
 
     tf_input_json_encoded = tf_input.to_json().encode()
     standard_write_to_db('readmission_tensorflow_predictions', tf_input_json_encoded)
