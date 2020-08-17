@@ -48,7 +48,7 @@ def make_model(tokens):
     return dictionary, corpus, lda_model
 
 def create_lda_model():
-    notes = standard_read_from_db('all_notes_cleansed').decode()
+    notes = standard_read_from_db('readmission_notes_cleansed').decode()
     tokens = create_ngram_tokens(notes)
     dictionary, corpus, lda_model = make_model(tokens)
 
@@ -60,5 +60,5 @@ def create_lda_model():
 
     lda_model_pickle = pickle.dumps(lda_model)
 
-    lda_output_write_to_db('lda_output',dictionary, corpus, lda_topics_list)
-    standard_write_to_db('lda_model', lda_model_pickle)
+    lda_output_write_to_db('readmission_lda_output', dictionary, corpus, lda_topics_list)
+    standard_write_to_db('readmission_lda_model', lda_model_pickle)
