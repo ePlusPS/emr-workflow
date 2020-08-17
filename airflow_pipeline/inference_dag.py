@@ -12,6 +12,8 @@ import new_records_lda_topics_per_note
 import new_records_demographics_one_hot
 import new_records_make_los_tf_input
 import new_records_make_readmission_tf_input
+import new_records_tf_los_predictions
+import new_records_tf_readmissions_predictions
 
 default_args = {
     'owner': 'EMR Appliance Pipeline',
@@ -80,6 +82,18 @@ tf_readm_input_operator = PythonOperator(
     dag = dag
     )
 
+tf_los_prediction_operator = PythonOperator(
+    task_id = 'make_los_tf_predictions',
+    python_callable = new_records_tf_los_predictions.make_tf_predictions,
+    dag = dag
+    )
+
+tf_readmission_prediction_operator = PythonOperator(
+    task_id = 'make_readmission_tf_predictions',
+    python_callable = new_records_tf_readmission_predictions.make_tf_predictions,
+    dag = dag
+    )
+
 new_records_operator.set_downstream([ner_clean_notes_operator, lda_topics_operator, demographics_one_hot_operator])
 
 ner_clean_notes_operator.set_downstream(ner_input_file_operator)
@@ -90,3 +104,6 @@ ner_labeled_notes_column_operator.set_downstream(ner_entity_column_operator)
 lda_topics_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
 ner_entity_column_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
 demographics_one_hot_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
+
+tf_los_input_operator.set_downstream(tf_los_prediction_operator)
+tf_readmission_input_operator.set_downstream(tf_readmission_prediction_operator)
