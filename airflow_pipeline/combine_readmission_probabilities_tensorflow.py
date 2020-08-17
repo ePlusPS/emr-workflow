@@ -84,6 +84,6 @@ def make_predictions():
     standard_write_to_db('readmission_tensorflow_predictions', tf_input_json_encoded)
 
     now = datetime.datetime.now()
-    str_datetime =now.strftime("%m/%d/%Y_%H:%M:%S")
+    str_datetime =now.strftime("%m-%d-%Y_%H:%M:%S")
     model.save('tf_readmission/most_recent')
     model.save('tf_readmission/'+str_datetime)
