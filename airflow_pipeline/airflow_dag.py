@@ -41,6 +41,8 @@ import create_report_summary
 import write_summary_report_to_directory
 import create_lda_model
 import lda_topics_per_note
+import readmission_create_lda_model
+import readmission_lda_topics_per_note
 
 import placeholder
 
@@ -167,11 +169,11 @@ ner_entity_columns_operator = PythonOperator(
 #    dag = dag
 #    )
 
-#xgb_readmission_demo_operator = PythonOperator(
-#    task_id = 'readmission_xgb_demographics',
-#    python_callable = xgb_readmission_demographics.make_predictions,
-#    dag = dag
-#    )
+xgb_readmission_demo_operator = PythonOperator(
+    task_id = 'readmission_xgb_demographics',
+    python_callable = xgb_readmission_demographics.make_predictions,
+    dag = dag
+    )
 
 xgb_readmission_feat_operator = PythonOperator(
     task_id = 'readmission_xgb_feature_entities',
@@ -202,11 +204,11 @@ xgb_readmission_lda_operator = PythonOperator(
     python_callable = xgb_readmission_lda_topics.make_predictions,
     dag = dag)
 
-#xgb_los_demo_operator = PythonOperator(
-#    task_id = 'los_xgb_demographics',
-#    python_callable = xgb_los_demographics.make_predictions,
-#    dag = dag
-#    )
+xgb_los_demo_operator = PythonOperator(
+    task_id = 'los_xgb_demographics',
+    python_callable = xgb_los_demographics.make_predictions,
+    dag = dag
+    )
 
 xgb_los_feat_operator = PythonOperator(
     task_id = 'los_xgb_feature_entities',
@@ -292,6 +294,18 @@ lda_per_note_operator = PythonOperator(
     dag = dag
     )
 
+readmission_lda_model_operator = PythonOperator(
+    task_id = 'readmission_create_lda_model',
+    python_callable = readmission_create_lda_model.create_lda_model,
+    dag = dag
+    )
+
+readmission_lda_topics_per_note_operator = PythonOperator(
+    task_id = 'readmission_lda_topics_per_note',
+    python_callable = readmission_lda_topics_per_note.get_ngrams_per_note,
+    dag = dag
+    )
+
 df_from_api_operator.set_downstream(structured_features_operator)
 structured_features_operator.set_downstream([
     all_word2vec_clean_notes_operator, 
@@ -301,7 +315,7 @@ structured_features_operator.set_downstream([
 
 readmission_word2vec_clean_notes_operator.set_downstream(readmission_word2vec_tokenize_notes_operator)
 readmission_word2vec_tokenize_notes_operator.set_downstream(readmission_word2vec_operator)
-readmission_word2vec_operator.set_downstream(readmission_one_hot_operator)
+readmission_word2vec_operator.set_downstream([readmission_lda_model_operator, readmission_one_hot_operator])
 all_word2vec_clean_notes_operator.set_downstream(all_word2vec_tokenize_notes_operator)
 all_word2vec_tokenize_notes_operator.set_downstream(all_word2vec_operator)
 all_word2vec_operator.set_downstream([infected_one_hot_operator, lda_model_operator])
@@ -310,19 +324,19 @@ ner_input_text_operator.set_downstream(label_with_ner_operator)
 label_with_ner_operator.set_downstream(labeled_notes_column_operator)
 labeled_notes_column_operator.set_downstream(ner_entity_columns_operator)
 ner_entity_columns_operator.set_downstream([
-    #xgb_readmission_demo_operator, 
+    xgb_readmission_demo_operator, 
     xgb_readmission_feat_operator,
     xgb_readmission_neg_feat_operator,
     xgb_readmission_med_operator,
     xgb_readmission_neg_med_operator,
     xgb_readmission_lda_operator,
-    #xgb_los_demo_operator,
+    xgb_los_demo_operator,
     xgb_los_feat_operator,
     xgb_los_neg_feat_operator,
     xgb_los_med_operator,
     xgb_los_neg_med_operator,
     xgb_los_lda_operator])
-#xgb_los_demo_operator.set_downstream(los_tensorflow_operator)
+xgb_los_demo_operator.set_downstream(los_tensorflow_operator)
 xgb_los_feat_operator.set_downstream(los_tensorflow_operator)
 xgb_los_neg_feat_operator.set_downstream(los_tensorflow_operator)
 xgb_los_med_operator.set_downstream(los_tensorflow_operator)
@@ -330,7 +344,7 @@ xgb_los_neg_med_operator.set_downstream(los_tensorflow_operator)
 xgb_los_lda_operator.set_downstream(los_tensorflow_operator)
 readmission_classifier_prep_operator.set_downstream(readmission_classifier_train_predict_operator)
 readmission_classifier_train_predict_operator.set_downstream(readmission_tensorflow_operator)
-#xgb_readmission_demo_operator.set_downstream(readmission_tensorflow_operator)
+xgb_readmission_demo_operator.set_downstream(readmission_tensorflow_operator)
 xgb_readmission_feat_operator.set_downstream(readmission_tensorflow_operator)
 xgb_readmission_neg_feat_operator.set_downstream(readmission_tensorflow_operator)
 xgb_readmission_med_operator.set_downstream(readmission_tensorflow_operator)
@@ -339,9 +353,10 @@ xgb_readmission_lda_operator.set_downstream(readmission_tensorflow_operator)
 readmission_tensorflow_operator.set_downstream(readmission_prob_to_likert_operator)
 readmission_prob_to_likert_operator.set_downstream(summary_report_operator)
 los_tensorflow_operator.set_downstream(summary_report_operator)
-readmission_word2vec_operator.set_downstream(summary_report_operator)
 lda_model_operator.set_downstream(lda_per_note_operator)
 lda_per_note_operator.set_downstream(ner_entity_columns_operator)
+readmission_lda_model_operator.set_downstream(readmission_lda_topics_per_note_operator)
+readmission_lda_topics_per_note_operator.set_downstream(ner_entity_columns_operator)
 summary_report_operator.set_downstream(write_to_dash_operator)
 #infected_one_hot_operator.set_downstream(combine_all_dataframes_operator)
 #readmission_one_hot_operator.set_downstream(combine_all_dataframes_operator)
