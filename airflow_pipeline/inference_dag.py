@@ -14,6 +14,8 @@ import new_records_make_los_tf_input
 import new_records_make_readmission_tf_input
 import new_records_tf_los_predictions
 import new_records_tf_readmission_predictions
+import new_records_readmission_classifier_prep_tokenize_notes
+import new_records_readmission_classifier_predict
 
 default_args = {
     'owner': 'EMR Appliance Pipeline',
@@ -70,6 +72,18 @@ demographics_one_hot_operator = PythonOperator(
     dag = dag
     )
 
+readmission_classifier_tokenize_notes_operator = PythonOperator(
+    task_id = 'readmission_classifier_tokenize_notes',
+    python_callable = new_records_readmission_classifier_prep_tokenize_notes.readmission_classifier_clean_notes,
+    dag = dag
+    )
+
+readmission_classifier_predict_operator = PythonOperator(
+    task_id = 'readmission_classifier_predict_probabilities',
+    python_callable = new_records_readmission_classifier_predict.predict,
+    dag = dag
+    )
+
 tf_los_input_operator = PythonOperator(
     task_id = 'make_tf_input_los',
     python_callable = new_records_make_los_tf_input.make_input,
@@ -94,7 +108,7 @@ tf_readmission_prediction_operator = PythonOperator(
     dag = dag
     )
 
-new_records_operator.set_downstream([ner_clean_notes_operator, lda_topics_operator, demographics_one_hot_operator])
+new_records_operator.set_downstream([ner_clean_notes_operator, lda_topics_operator, demographics_one_hot_operator, readmission_classifier_tokenize_notes_operator])
 
 ner_clean_notes_operator.set_downstream(ner_input_file_operator)
 ner_input_file_operator.set_downstream(ner_label_notes_operator)
@@ -104,6 +118,9 @@ ner_labeled_notes_column_operator.set_downstream(ner_entity_column_operator)
 lda_topics_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
 ner_entity_column_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
 demographics_one_hot_operator.set_downstream([tf_los_input_operator, tf_readm_input_operator])
+
+readmission_classifier_tokenize_notes_operator.set_downstream(readmission_classifier_predict_operator)
+readmission_classifier_predict_operator.set_downstream(tf_readm_input_operator)
 
 tf_los_input_operator.set_downstream(tf_los_prediction_operator)
 tf_readm_input_operator.set_downstream(tf_readmission_prediction_operator)
