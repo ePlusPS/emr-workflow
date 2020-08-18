@@ -58,7 +58,7 @@ def make_predictions():
     prev_probas['xgb_lda_pred'] = xgb_lda_df['xgb_lda_pred']
 
     readm_class_input_df = pd.DataFrame()
-    readm_class_input_df['readmission_classifier_pred'] = readmission_classifier_df['readmisson_classifier_probabilities']
+    readm_class_input_df['readmission_classifier_pred'] = readmission_classifier_df['readmission_classifier_probabilities']
 
     tf_input = pd.concat(
             [#prev_probas,
