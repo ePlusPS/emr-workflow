@@ -57,8 +57,12 @@ def make_predictions():
     prev_probas['xgb_neg_med_ent_pred'] = xgb_med_df['xgb_med_ent_pred']
     prev_probas['xgb_lda_pred'] = xgb_lda_df['xgb_lda_pred']
 
+    readm_class_input_df = pd.DataFrame()
+    readm_class_input_df['readmission_classifier_pred'] = readmission_classifier_df['readmisson_classifier_probabilities']
+
     tf_input = pd.concat(
-            [#prev_probas, 
+            [#prev_probas,
+            readm_class_input_df,
             top_n_demo_df, 
             top_n_feat_df, 
             top_n_neg_feat_df, 
@@ -66,14 +70,6 @@ def make_predictions():
             top_n_neg_med_df,
             top_n_lda_df], axis=1)
 
-    print('prev_probas: '+prev_probas.columns)
-    print('top_n_demo_df: '+top_n_demo_df.columns)
-    print('top_n_feat_df: '+top_n_feat_df.columns)
-    print('top_n_neg_feat_df: '+top_n_neg_feat_df.columns)
-    print('top_n_med_df: '+top_n_med_df.columns)
-    print('top_n_neg_med_df: '+top_n_neg_med_df.columns)
-
-    print(tf_input.columns)
     readmissions = xgb_demo_df['readmission']
 
     model = create_model(tf_input, readmissions)

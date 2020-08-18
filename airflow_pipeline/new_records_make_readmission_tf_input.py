@@ -1,7 +1,7 @@
 from workflow_read_and_write import standard_read_from_db, xgb_read_from_db, standard_write_to_db
 import pandas as pd
 
-def make_tf_columns(df, top_n_col_dict, ner_entity_df, lda_topics_df, demo_one_hot_df):
+def make_tf_columns(df, top_n_col_dict, ner_entity_df, lda_topics_df, demo_one_hot_df, readm_classifier_df):
     
     top_n_demo_df = pd.DataFrame()
     for col in top_n_col_dict['demo']:
@@ -47,8 +47,12 @@ def make_tf_columns(df, top_n_col_dict, ner_entity_df, lda_topics_df, demo_one_h
             binary_col.append(val)
         top_n_lda_df[col] = binary_col
 
+    readm_class_input_df = pd.DataFrame()
+    readm_class_input_df['readmission_classifier_probabilities'] = readm_classifier_df['readmission_classifier_probabilities']
+
     tf_input = pd.concat(
-            [top_n_demo_df,
+            [readm_class_input_df,
+            top_n_demo_df,
             top_n_feat_df,
             top_n_neg_feat_df,
             top_n_med_df,
@@ -87,7 +91,7 @@ def make_input():
     records_df_json_encoded = standard_read_from_db('new_records')
     records_df = pd.read_json(records_df_json_encoded.decode())
 
-    # retrieve demo_one_hot_df, lda_topics_df, and entity_columns_df
+    # retrieve demo_one_hot_df, lda_topics_df, entity_columns_df, readm_classifier_df
     ner_entity_df_json_encoded = standard_read_from_db('new_records_entity_columns')
     ner_entity_df = pd.read_json(ner_entity_df_json_encoded.decode())
 
@@ -97,7 +101,10 @@ def make_input():
     demo_one_hot_df_json_encoded = standard_read_from_db('new_records_demographics')
     demo_one_hot_df = pd.read_json(demo_one_hot_df_json_encoded.decode())
 
-    tf_input = make_tf_columns(records_df, top_n_dict, ner_entity_df, lda_topics_df, demo_one_hot_df)
+    readm_classifier_df_json_encoded = standard_read_from_db('')
+    readm_classifier_df = pd.read_json(readm_classifier_df_json_encoded.decode())
+
+    tf_input = make_tf_columns(records_df, top_n_dict, ner_entity_df, lda_topics_df, demo_one_hot_df, readm_classifier_df)
 
     tf_input_json_encoded = tf_input.to_json().encode()
     standard_write_to_db('new_records_readmission_tf_input', tf_input_json_encoded)
