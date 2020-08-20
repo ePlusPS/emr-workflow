@@ -26,10 +26,11 @@ def standard_write_to_db(collection_name, step_output):
     mongodb_output = {'timestamp':timestamp, 'gridfs_id':gridfs_id}
     collection.insert_one(mongodb_output)
 
-def lda_output_read_from_db():
+def lda_output_read_from_db(collection_name):
     db = get_db()
     fs = gridfs.GridFS(db)
-    collection = db['lda_output']
+    #collection = db['lda_output']
+    collection = db[collection_name]
     most_recent_entry = collection.find_one(sort=[('_id', pymongo.DESCENDING)])
 
     dictionary_pickle = fs.get(most_recent_entry['dictionary_gridfs_id']).read()
@@ -42,9 +43,10 @@ def lda_output_read_from_db():
 
     return dictionary, corpus, lda_topics
 
-def lda_output_write_to_db(dictionary, corpus, lda_topics):
+def lda_output_write_to_db(collection_name,dictionary, corpus, lda_topics):
     db = get_db()
-    collection = db['lda_output']
+    #collection = db['lda_output']
+    collection = db[collection_name]
     fs = gridfs.GridFS(db)
 
     #serialize objects
