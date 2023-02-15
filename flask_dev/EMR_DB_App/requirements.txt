@@ -41,5 +41,5 @@ six==1.11.0
 SQLAlchemy
 Twisted==17.9.0
 urllib3==1.24.2
-Werkzeug==0.16.0
+Werkzeug==2.2.3
 zope.interface==4.3.2
