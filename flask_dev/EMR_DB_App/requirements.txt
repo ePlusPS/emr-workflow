@@ -8,7 +8,7 @@ Click==7.0
 colorama==0.3.7
 configobj==5.0.6
 constantly==15.1.0
-Flask==1.1.1
+Flask==2.3.2
 Flask-SQLAlchemy==2.4.1
 httplib2==0.18.0
 hyperlink==17.3.1
